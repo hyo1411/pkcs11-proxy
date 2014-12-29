@@ -1001,7 +1001,7 @@ static CK_RV rpc_C_WaitForSlotEvent(CallState * cs)
 	BEGIN_CALL(C_WaitForSlotEvent);
 	IN_ULONG(flags);
 	PROCESS_CALL((flags, &slot_id, NULL));
-	slot_id = CK_GNOME_APPARTMENT_SLOT(slot_id);
+	slot_id = (slot_id);
 	OUT_ULONG(slot_id);
 	END_CALL;
 }
@@ -1074,7 +1074,7 @@ static CK_RV rpc_C_GetSessionInfo(CallState * cs)
 	BEGIN_CALL(C_GetSessionInfo);
 	IN_ULONG(session);
 	PROCESS_CALL((session, &info));
-	info.slotID = CK_GNOME_APPARTMENT_SLOT(info.slotID);
+	info.slotID = (info.slotID);
 	OUT_SESSION_INFO(info);
 	END_CALL;
 }
@@ -1874,6 +1874,10 @@ static CK_RV rpc_C_GenerateRandom(CallState * cs)
 	BEGIN_CALL(C_GenerateRandom);
 	IN_ULONG(session);
 	IN_BYTE_BUFFER(random_data, random_len);
+	if (!random_data) {
+		unsigned char i;
+		random_data = (CK_BYTE_PTR)&i;
+	}
 	PROCESS_CALL((session, random_data, random_len));
 	OUT_BYTE_ARRAY(random_data, random_len);
 	END_CALL;
